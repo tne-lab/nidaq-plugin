@@ -135,7 +135,6 @@ public:
 	int digitalReadSize;
 
 	SettingsRange sampleRateRange;
-
 	Array<SettingsRange> voltageRanges;
 	Array<NIDAQ::float64> adcResolutions;
 
@@ -193,6 +192,9 @@ public:
 	NIDAQ::float64 getSampleRate() { return sampleRates[sampleRateIndex]; };
 	void setSampleRate(int index) { sampleRateIndex = index; };
 
+	NIDAQ::uInt16 getBufferSize() { return bufferSizes[bufferSizeIndex]; };
+	void setBufferSize(int index) { bufferSizeIndex = index; };
+
 	SettingsRange getVoltageRange() { return device->voltageRanges[voltageRangeIndex]; };
 	void setVoltageRange(int index) { voltageRangeIndex = index; };
 
@@ -219,6 +221,7 @@ public:
 	void run();
 
 	Array<NIDAQ::float64> sampleRates;
+	Array<NIDAQ::uInt16> bufferSizes;
 
 	OwnedArray<AnalogInput> 	ai;
 	OwnedArray<InputChannel> 	di;
@@ -232,6 +235,7 @@ private:
 
 	int deviceIndex = 0;
 	int sampleRateIndex = 0;
+	int bufferSizeIndex = 0;
 	int voltageRangeIndex = 0;
 
 	int digitalReadSize = 0;

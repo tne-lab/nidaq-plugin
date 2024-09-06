@@ -130,6 +130,7 @@ void EditorBackground::paint(Graphics& g)
 		g.drawText(String("DEVICE"), settingsOffsetX, 13, 100, 10, Justification::centredLeft);
 		g.drawText(String("SAMPLE RATE"), settingsOffsetX, 45, 100, 10, Justification::centredLeft);
 		g.drawText(String("AI VOLTAGE RANGE"), settingsOffsetX, 77, 100, 10, Justification::centredLeft);
+		g.drawText(String("SAMPLE BUFFER"), settingsOffsetX + 105, 13, 100, 10, Justification::centredLeft);
 
 		/*
 		g.drawText(String("USAGE"), settingsOffsetX, 77, 100, 10, Justification::centredLeft);
@@ -456,6 +457,18 @@ void NIDAQEditor::draw()
 	voltageRangeSelectBox->addListener(this);
 	addAndMakeVisible(voltageRangeSelectBox);
 
+	bufferSelectBox = new ComboBox("BufferSelectBox");
+	bufferSelectBox->setBounds(xOffset + 105, 39, 85, 20);
+	Array<int> bufferArray = {500,450,400,350,300,250,200};
+	for (int i = 0; i < bufferArray.size(); i++)
+	{
+		String bufferString = String(bufferArray[i]) + " Samples" ;
+		bufferSelectBox->addItem(bufferString, i + 1);
+	}
+	bufferSelectBox->setSelectedItemIndex(0, false);
+	bufferSelectBox->addListener(this);
+	addAndMakeVisible(bufferSelectBox);
+
 	fifoMonitor = new FifoMonitor(thread);
 	fifoMonitor->setBounds(xOffset + 2, 105, 70, 12);
 	//addAndMakeVisible(fifoMonitor);
@@ -466,7 +479,7 @@ void NIDAQEditor::draw()
 	configureDeviceButton->setAlpha(0.5f);
 	addAndMakeVisible(configureDeviceButton);
 	
-	desiredWidth = xOffset + 100;
+	desiredWidth = xOffset + 205;
 
 	background = new EditorBackground(nAI, nDI);
 	background->setBounds(0, 15, 1000, 150);
@@ -524,6 +537,7 @@ void NIDAQEditor::startAcquisition()
 	deviceSelectBox->setEnabled(false);
 	sampleRateSelectBox->setEnabled(false);
 	voltageRangeSelectBox->setEnabled(false);
+	bufferSelectBox->setEnabled(false);
 
 	//Disable device config button
 	configureDeviceButton->setEnabled(false);
@@ -539,6 +553,7 @@ void NIDAQEditor::stopAcquisition()
 	deviceSelectBox->setEnabled(true);
 	sampleRateSelectBox->setEnabled(true);
 	voltageRangeSelectBox->setEnabled(true);
+	bufferSelectBox->setEnabled(true)
 
 	//Enable device config button
 	configureDeviceButton->setEnabled(true);
@@ -583,7 +598,7 @@ void NIDAQEditor::comboBoxChanged(ComboBox* comboBox)
 			comboBox->setSelectedItemIndex(thread->getSampleRateIndex());
 		}
 	}
-	else // (comboBox == voltageRangeSelectBox)
+	else if (comboBox == voltageRangeSelectBox)
 	{
 		if (!thread->isThreadRunning())
 		{
@@ -595,7 +610,17 @@ void NIDAQEditor::comboBoxChanged(ComboBox* comboBox)
 			comboBox->setSelectedItemIndex(thread->getVoltageRangeIndex());
 		}
 	}
-
+	else if (comboBox == bufferSelectBox){
+		if (!thread->isThreadRunning())
+		{
+			// thread->setVoltageRange(comboBox->getSelectedId() - 1);
+			// CoreServices::updateSignalChain(this);
+		}
+		else 
+		{
+			// comboBox->setSelectedItemIndex(thread->getVoltageRangeIndex());
+		}
+	}
 } 
 
 void NIDAQEditor::buttonEvent(Button* button)

@@ -154,6 +154,12 @@ public:
 	/** Returns the sample rate of the data source.*/
 	float getSampleRate();
 
+	/** Sets the buffer size of the DAQ */
+	void setBufferSize(int bufferIndex);
+
+	/** Gets the buffer size of the DAQ */
+	int getBufferSize();
+
 	/** Responds to broadcast messages sent during acquisition */
 	void handleBroadcastMessage(String msg) override;
 
@@ -190,6 +196,7 @@ private:
 	/* Selectable device properties */
 	int deviceIndex = 0;
 	int sampleRateIndex = 0;
+	int bufferSizeIndex = 0;
 	int voltageRangeIndex = 0;
 
 	bool isRecording;

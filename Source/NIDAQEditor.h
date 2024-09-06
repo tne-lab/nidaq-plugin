@@ -231,6 +231,7 @@ private:
 	ScopedPointer<ComboBox> deviceSelectBox;
 	ScopedPointer<ComboBox> sampleRateSelectBox;
 	ScopedPointer<ComboBox> voltageRangeSelectBox;
+	ScopedPointer<ComboBox> bufferSelectBox;
 	ScopedPointer<FifoMonitor> fifoMonitor;
 
 	ScopedPointer<UtilityButton> configureDeviceButton;

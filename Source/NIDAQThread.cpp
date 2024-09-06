@@ -356,6 +356,17 @@ float NIDAQThread::getSampleRate()
 	return mNIDAQ->getSampleRate();
 }
 
+void NIDAQThread::setBufferSize(int bufferIndex)
+{
+	bufferSizeIndex = bufferIndex;
+	mNIDAQ->setBufferSize(bufferIndex);
+}
+
+int NIDAQThread::getBufferSize()
+{
+	return mNIDAQ->getBufferSize();
+}
+
 Array<SettingsRange> NIDAQThread::getVoltageRanges()
 {
 	return mNIDAQ->device->voltageRanges;
