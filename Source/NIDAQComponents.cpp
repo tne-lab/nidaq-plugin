@@ -400,9 +400,9 @@ void NIDAQmx::run()
 	static int			totalAIRead = 0;
 
 	aiBuffer->clear();
-	ai_data.malloc(CHANNEL_BUFFER_SIZE * numActiveAnalogInputs, sizeof(NIDAQ::float64));
+	ai_data.malloc(getBufferSize() * numActiveAnalogInputs, sizeof(NIDAQ::float64)); // CHANNEL_BUFFER_SIZE
 
-	eventCodes.malloc(CHANNEL_BUFFER_SIZE, sizeof(NIDAQ::uInt32));
+	eventCodes.malloc(getBufferSize() , sizeof(NIDAQ::uInt32)); // CHANNEL_BUFFER_SIZE
 
 	/* Create an analog input task */
 	if (device->isUSBDevice)
@@ -449,9 +449,10 @@ void NIDAQmx::run()
 		getSampleRate(),									//rate : samples per second per channel
 		DAQmx_Val_Rising,									//activeEdge : (DAQmc_Val_Rising || DAQmx_Val_Falling)
 		DAQmx_Val_ContSamps,								//sampleMode : (DAQmx_Val_FiniteSamps || DAQmx_Val_ContSamps || DAQmx_Val_HWTimedSinglePoint)
-		numActiveAnalogInputs * CHANNEL_BUFFER_SIZE));		//sampsPerChanToAcquire : 
+		numActiveAnalogInputs * getBufferSize()));		//sampsPerChanToAcquire : 
 																//If sampleMode == DAQmx_Val_FiniteSamps : # of samples to acquire for each channel
 																//Elif sampleMode == DAQmx_Val_ContSamps : circular buffer size
+																// CHANNEL_BUFFER_SIZE
 
 
 	/* Get handle to analog trigger to sync with digital inputs */
@@ -513,9 +514,10 @@ void NIDAQmx::run()
 							getSampleRate(),						//rate : samples per second per channel
 							DAQmx_Val_Rising,						//activeEdge : (DAQmc_Val_Rising || DAQmx_Val_Falling)
 							DAQmx_Val_ContSamps,					//sampleMode : (DAQmx_Val_FiniteSamps || DAQmx_Val_ContSamps || DAQmx_Val_HWTimedSinglePoint)
-							CHANNEL_BUFFER_SIZE));					//sampsPerChanToAcquire : want to sync with analog samples per channel
+							getBufferSize()));					//sampsPerChanToAcquire : want to sync with analog samples per channel
 																	//If sampleMode == Dmx_Val_FiniteSamps : # of samples to acquire for each channel
 																	//Elif sampleMode == DAQAQmx_Val_ContSamps : circular buffer size
+																	// CHANNEL_BUFFER_SIZE
 				}
 
 				taskHandlesDI.push_back(taskHandleDI);
@@ -543,7 +545,7 @@ void NIDAQmx::run()
 	}
 	if (numActiveAnalogInputs) DAQmxErrChk(NIDAQ::DAQmxStartTask(taskHandleAI));
 
-	NIDAQ::int32 numSampsPerChan = CHANNEL_BUFFER_SIZE;
+	NIDAQ::int32 numSampsPerChan = getBufferSize(); // CHANNEL_BUFFER_SIZE 
 	if (device->isUSBDevice)
 		numSampsPerChan = 100;
 
@@ -574,7 +576,7 @@ void NIDAQmx::run()
 		if (getActiveDigitalLines() > 0)
 		{
 
-			for (int i = 0; i < CHANNEL_BUFFER_SIZE; i++)
+			for (int i = 0; i < getBufferSize(); i++) // CHANNEL_BUFFER_SIZE 
 				eventCodes[i] = 0;
 
 			int portIdx = 0;
@@ -583,7 +585,7 @@ void NIDAQmx::run()
 
 				if (digitalReadSize == 32)
 				{
-					NIDAQ::uInt32 di_data_32_[CHANNEL_BUFFER_SIZE];
+					NIDAQ::uInt32 di_data_32_[getBufferSize()]; // CHANNEL_BUFFER_SIZE 
 					DAQmxErrChk(NIDAQ::DAQmxReadDigitalU32(
 						taskHandleDI,
 						numSampsPerChan,
@@ -598,7 +600,7 @@ void NIDAQmx::run()
 				}
 				else if (digitalReadSize == 16)
 				{
-					NIDAQ::uInt16 di_data_16_[CHANNEL_BUFFER_SIZE];
+					NIDAQ::uInt16 di_data_16_[getBufferSize()]; // CHANNEL_BUFFER_SIZE 
 					DAQmxErrChk(NIDAQ::DAQmxReadDigitalU16(
 						taskHandleDI,
 						numSampsPerChan,
@@ -614,7 +616,7 @@ void NIDAQmx::run()
 				}
 				else if (digitalReadSize == 8)
 				{
-					NIDAQ::uInt8 di_data_8_[CHANNEL_BUFFER_SIZE];
+					NIDAQ::uInt8 di_data_8_[getBufferSize()]; // CHANNEL_BUFFER_SIZE
 					DAQmxErrChk(NIDAQ::DAQmxReadDigitalU8(
 						taskHandleDI,
 						numSampsPerChan,
